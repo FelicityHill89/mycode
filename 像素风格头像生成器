@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>像素风格头像生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Arial', sans-serif;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .container {
+            text-align: center;
+        }
+        
+        h1 {
+            color: #00ff88;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #00ff88;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+        
+        canvas {
+            display: block;
+            background: #0f3460;
+            border: 4px solid #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #00ff88;
+            color: #1a1a2e;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+        }
+        
+        button:hover {
+            background: #00cc6a;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.7);
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 PIXEL AVATAR GENERATOR 🎮</h1>
+        <canvas id="pixelCanvas" width="320" height="320"></canvas>
+        <div class="controls">
+            <button onclick="generatePixelAvatar()">🔄 生成新头像</button>
+            <button onclick="downloadAvatar()">💾 下载</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('pixelCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 像素大小
+        const pixelSize = 8;
+        
+        // 像素颜色调色板
+        const colors = {
+            bg: '#0f3460',
+            skin: '#f4a460',
+            hair: '#8b4513',
+            eye: '#ffffff',
+            pupil: '#000000',
+            blush: '#ff69b4',
+            mouth: '#ff1493',
+            shadow: '#d2691e'
+        };
+        
+        // 绘制单个像素块
+        function drawPixel(x, y, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+        }
+        
+        // 生成随机头像
+        function generatePixelAvatar() {
+            // 清空画布
+            ctx.fillStyle = colors.bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 随机选择风格
+            const style = Math.floor(Math.random() * 3);
+            
+            switch(style) {
+                case 0:
+                    drawAvatar1();
+                    break;
+                case 1:
+                    drawAvatar2();
+                    break;
+                case 2:
+                    drawAvatar3();
+                    break;
+            }
+        }
+        
+        // 风格1：方形脸
+        function drawAvatar1() {
+            // 头部（方形）
+            for (let x = 8; x < 32; x++) {
+                for (let y = 6; y < 28; y++) {
+                    drawPixel(x, y, colors.skin);
+                }
+            }
+            
+            // 头发（顶部）
+            for (let x = 6; x < 34; x++) {
+                for (let y = 2; y < 8; y++) {
+                    drawPixel(x, y, colors.hair);
+                }
+            }
+            
+            // 头发（两侧）
+            for (let y = 8; y < 24; y++) {
+                drawPixel(6, y, colors.hair);
+                drawPixel(33, y, colors.hair);
+            }
+            
+            // 左眼白
+            for (let x = 10; x < 16; x++) {
+                for (let y = 12; y < 18; y++) {
+                    drawPixel(x, y, colors.eye);
+                }
+            }
+            
+            // 右眼白
+            for (let x = 24; x < 30; x++) {
+                for (let y = 12; y < 18; y++) {
+                    drawPixel(x, y, colors.eye);
+                }
+            }
+            
+            // 左眼瞳孔
+            for (let x = 11; x < 15; x++) {
+                for (let y = 13; y < 17; y++) {
+                    drawPixel(x, y, colors.pupil);
+                }
+            }
+            
+            // 右眼瞳孔
+            for (let x = 25; x < 29; x++) {
+                for (let y = 13; y < 17; y++) {
+                    drawPixel(x, y, colors.pupil);
+                }
+            }
+            
+            // 眼睛高光
+            drawPixel(12, 14, colors.eye);
+            drawPixel(26, 14, colors.eye);
+            
+            // 鼻子
+            drawPixel(20, 18, colors.shadow);
+            drawPixel(20, 19, colors.shadow);
+            
+            // 嘴巴
+            for (let x = 17; x < 24; x++) {
+                drawPixel(x, 23, colors.mouth);
+            }
+            drawPixel(18, 24, colors.mouth);
+            drawPixel(19, 24, colors.mouth);
+            drawPixel(20, 25, colors.mouth);
+            drawPixel(21, 24, colors.mouth);
+            drawPixel(22, 24, colors.mouth);
+            
+            // 腮红（左）
+            for (let x = 7; x < 10; x++) {
+                for (let y = 18; y < 21; y++) {
+                    drawPixel(x, y, colors.blush);
+                }
+            }
+            
+            // 腮红（右）
+            for (let x = 30; x < 33; x++) {
+                for (let y = 18; y < 21; y++) {
+                    drawPixel(x, y, colors.blush);
+                }
+            }
+            
+            // 装饰星星
+            drawPixelStar(2, 4, colors.hair);
+            drawPixelStar(36, 6, colors.hair);
+        }
+        
+        // 风格2：圆形脸
+        function drawAvatar2() {
+            // 用圆形像素绘制脸
+            const centerX = 20;
+            const centerY = 17;
+            const radius = 11;
+            
+            for (let x = centerX - radius; x <= centerX + radius; x++) {
+                for (let y = centerY - radius; y <= centerY + radius; y++) {
+                    const dist = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+                    if (dist <= radius) {
+                        drawPixel(x, y, colors.skin);
+                    }
+                }
+            }
+            
+            // 头发
+            for (let x = centerX - radius - 2; x <= centerX + radius + 2; x++) {
+                for (let y = centerY - radius - 3; y <= centerY - radius; y++) {
+                    const dist = Math.sqrt((x - centerX) ** 2 + (y - centerY - 2) ** 2);
+                    if (dist <= radius + 1) {
+                        drawPixel(x, y, colors.hair);
+                    }
+                }
+            }
+            
+            // 左眼
+            drawPixel(16, 14, colors.eye);
+            drawPixel(17, 14, colors.eye);
+            drawPixel(16, 15, colors.eye);
+            drawPixel(17, 15, colors.eye);
+            drawPixel(16, 16, colors.eye);
+            drawPixel(17, 16, colors.eye);
+            
+            // 右眼
+            drawPixel(24, 14, colors.eye);
+            drawPixel(25, 14, colors.eye);
+            drawPixel(24, 15, colors.eye);
+            drawPixel(25, 15, colors.eye);
+            drawPixel(24, 16, colors.eye);
+            drawPixel(25, 16, colors.eye);
+            
+            // 瞳孔
+            drawPixel(17, 15, colors.pupil);
+            drawPixel(24, 15, colors.pupil);
+            
+            // 鼻子
+            drawPixel(20, 17, colors.shadow);
+            drawPixel(20, 18, colors.shadow);
+            
+            // 嘴巴
+            for (let x = 18; x < 23; x++) {
+                drawPixel(x, 22, colors.mouth);
+            }
+            drawPixel(19, 23, colors.mouth);
+            drawPixel(20, 23, colors.mouth);
+            drawPixel(21, 23, colors.mouth);
+            
+            // 腮红
+            drawPixel(13, 18, colors.blush);
+            drawPixel(14, 18, colors.blush);
+            drawPixel(27, 18, colors.blush);
+            drawPixel(28, 18, colors.blush);
+        }
+        
+        // 风格3：可爱风
+        function drawAvatar3() {
+            // 头部
+            for (let x = 9; x < 32; x++) {
+                for (let y = 8; y < 26; y++) {
+                    drawPixel(x, y, colors.skin);
+                }
+            }
+            
+            // 头发（上面的尖刺风格）
+            const hairPoints = [
+                [6, 5], [7, 3], [8, 2], [9, 3], [10, 4],
+                [12, 2], [13, 1], [14, 2], [15, 4],
+                [17, 2], [18, 1], [19, 2], [20, 3],
+                [22, 2], [23, 1], [24, 2], [25, 4],
+                [27, 2], [28, 3], [29, 4], [30, 5], [31, 6], [32, 7]
+            ];
+            hairPoints.forEach(([x, y]) => drawPixel(x, y, colors.hair));
+            
+            // 头发（两侧）
+            for (let y = 8; y < 24; y++) {
+                drawPixel(7, y, colors.hair);
+                drawPixel(8, y, colors.hair);
+                drawPixel(32, y, colors.hair);
+                drawPixel(33, y, colors.hair);
+            }
+            
+            // 大眼睛（左）
+            for (let x = 11; x < 16; x++) {
+                for (let y = 11; y < 17; y++) {
+                    drawPixel(x, y, colors.eye);
+                }
+            }
+            
+            // 大眼睛（右）
+            for (let x = 24; x < 29; x++) {
+                for (let y = 11; y < 17; y++) {
+                    drawPixel(x, y, colors.eye);
+                }
+            }
+            
+            // 瞳孔（左）
+            for (let x = 12; x < 15; x++) {
+                for (let y = 12; y < 16; y++) {
+                    drawPixel(x, y, colors.pupil);
+                }
+            }
+            
+            // 瞳孔（右）
+            for (let x = 25; x < 28; x++) {
+                for (let y = 12; y < 16; y++) {
+                    drawPixel(x, y, colors.pupil);
+                }
+            }
+            
+            // 眼光
+            drawPixel(13, 12, colors.eye);
+            drawPixel(26, 12, colors.eye);
+            
+            // 开心的嘴巴
+            for (let x = 17; x < 24; x++) {
+                drawPixel(x, 22, colors.mouth);
+            }
+            for (let x = 17; x < 24; x++) {
+                drawPixel(x, 23, colors.mouth);
+            }
+            
+            // 大腮红
+            for (let x = 6; x < 10; x++) {
+                for (let y = 17; y < 22; y++) {
+                    drawPixel(x, y, colors.blush);
+                }
+            }
+            
+            for (let x = 30; x < 34; x++) {
+                for (let y = 17; y < 22; y++) {
+                    drawPixel(x, y, colors.blush);
+                }
+            }
+        }
+        
+        // 绘制像素星星
+        function drawPixelStar(x, y, color) {
+            const star = [
+                [1, 0],
+                [2, 0],
+                [3, 1],
+                [3, 2],
+                [2, 3],
+                [1, 3],
+                [0, 2],
+                [0, 1]
+            ];
+            star.forEach(([dx, dy]) => drawPixel(x + dx, y + dy, color));
+        }
+        
+        // 下载图片
+        function downloadAvatar() {
+            const link = document.createElement('a');
+            link.download = 'pixel-avatar.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // 初始化
+        generatePixelAvatar();
+    </script>
+</body>
+</html>
